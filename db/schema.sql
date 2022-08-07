@@ -20,6 +20,6 @@ CREATE TABLE employee (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
-    role_id INTEGER,
-    manager_id INTEGER
+    emp_role INTEGER,
+    emp_manager INTEGER
 );
