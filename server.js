@@ -6,25 +6,28 @@ const query = require("./config/connection");
 
 //prompt choices for user
 const promptUser = () => {
-  inquirer.prompt([
-    {
-      name: "choice",
-      type: "list",
-      message: "Please choose a option to continue:",
-      choices: [
-        "View All Employees",
-        "View All Departments",
-        "View All Roles",
-        "Add Department",
-        "Add Role",
-        "Add Employee",
-        "Remove Employee",
-        "Remove Role",
-        "Remove Department",
-        "Update Employee",
-        "Finish",
-      ],
-    }.then(function (answers) {
+  inquirer
+    .prompt([
+      {
+        name: "choice",
+        type: "list",
+        message: "Please choose a option to continue:",
+        choices: [
+          "View All Employees",
+          "View All Departments",
+          "View All Roles",
+          "Add Department",
+          "Add Role",
+          "Add Employee",
+          "Remove Employee",
+          "Remove Role",
+          "Remove Department",
+          "Update Employee",
+          "Finish",
+        ],
+      },
+    ])
+    .then(function (answers) {
       const { choices } = answers;
       if (choices === "View All Employees") {
         viewAllEmployees();
@@ -59,8 +62,7 @@ const promptUser = () => {
       if (choices === "Finish") {
         finish();
       }
-    }),
-  ]);
+    });
 };
 
 //view all employees
