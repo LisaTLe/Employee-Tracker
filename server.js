@@ -1,15 +1,31 @@
+const connection = require("./config/connection");
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
-// const cTable = require("console.table");
-const connection = require("./config/connection");
-const query = require("./config/connection");
+const cTable = require("console.table");
+
+// const query = require("./config/connection");
+
+//connect db
+
+// const connection = mysql.createConnection({
+//   host: "localhost",
+//   port: 3306,
+//   user: "root",
+//   password: "process.env.DB_PASSWORD",
+//   database: "employee_db",
+// });
+
+// connection.connect((err) => {
+//   if (err) throw err;
+//   promptUser();
+// });
 
 //prompt choices for user
 const promptUser = () => {
   inquirer
     .prompt([
       {
-        name: "choice",
+        name: "choices",
         type: "list",
         message: "Please choose a option to continue:",
         choices: [
@@ -60,56 +76,54 @@ const promptUser = () => {
         updateEmployee();
       }
       if (choices === "Finish") {
-        finish();
+        connection.end();
       }
     });
 };
 
 //view all employees
-const viewAllEmployees = async () => {
+const viewAllEmployees = () => {
   console.log("Now viewing all employees");
-  const { employee } = await inquirer.prompt([
-    {
-      message: "What is the name of the employee?",
-      name: "employee",
-    },
-  ]);
-  const sql = "INSERT INTO employee (name) VALUES (?)";
-  connection.query(sql, employee, (err, res) => {
-    if (err) console.log(err);
-    console.log(res);
+
+  const sql = `SELECT employee.id, 
+              employee.first_name, 
+              employee.last_name, 
+              role.title, 
+              departments.name AS departments, 
+              role.salary,
+              FROM employee, role, departments 
+              WHERE departments.id = role.departments_id`;
+
+  connection.query(sql, (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    promptUser();
   });
 };
 
 //view all departments
-const viewAllDepartments = async () => {
+const viewAllDepartments = () => {
   console.log("Now viewing all departments");
-  const { department } = await inquirer.prompt([
-    {
-      message: "What is the department name?",
-      name: "department",
-    },
-  ]);
-  const sql = "INSERT INTO department (name) VALUES (?)";
-  connection.query(sql, department, (err, res) => {
-    if (err) console.log(err);
-    console.log(res);
+  const sql = `SELECT departments.id AS id, 
+              departments.name AS departments FROM departments`;
+  connection.promise().query(sql, (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    promptUser();
   });
 };
 
 //view all roles
-const viewAllRoles = async () => {
+const viewAllRoles = () => {
   console.log("Now viewing all roles");
-  const { role } = await inquirer.prompt([
-    {
-      message: "What is the role of this employee?",
-      name: "role",
-    },
-  ]);
-  const sql = "INSERT INTO role (name) VALUES (?)";
-  connection.query(sql, role, (err, res) => {
-    if (err) console.log(err);
-    console.log(res);
+  const sql = `SELECT role.id, role.title, 
+              department.name AS department
+              FROM role
+              INNER JOIN department ON role.department_id = department.id`;
+  connection.promise().query(sql, (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    promptUser();
   });
 };
 
@@ -126,6 +140,7 @@ const addDepartment = async () => {
   connection.query(sql, department, (err, res) => {
     if (err) console.log(err);
     console.log(res);
+    promptUser();
   });
 };
 
@@ -163,6 +178,7 @@ const addEmployee = async () => {
     (err, res) => {
       if (err) console.log(err);
       console.log(res);
+      promptUser();
     }
   );
 };
@@ -180,6 +196,7 @@ const addRole = async () => {
   connection.query(sql, role, (err, res) => {
     if (err) console.log(err);
     console.log(res);
+    promptUser();
   });
 };
 
@@ -215,6 +232,7 @@ const updateEmployee = async () => {
     ]);
   } catch (err) {
     console.log(err);
+    promptUser();
   }
 };
 
