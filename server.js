@@ -2,6 +2,7 @@ const connection = require("./config/connection");
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const cTable = require("console.table");
+const { query } = require("express");
 
 // const query = require("./config/connection");
 
@@ -49,6 +50,7 @@ const promptUser = () => {
         viewAllEmployees();
       }
       if (choices === "View All Departments") {
+        getAllDepartments();
         viewAllDepartments();
       }
       if (choices === "View All Roles") {
@@ -89,38 +91,47 @@ const viewAllEmployees = () => {
               employee.first_name, 
               employee.last_name, 
               role.title, 
-              departments.name AS departments, 
+              department.name AS department, 
               role.salary,
-              FROM employee, role, departments 
-              WHERE departments.id = role.departments_id`;
+              FROM employee, role, department 
+              WHERE department.id = role.department_id`;
 
-  connection.query(sql, (err, res) => {
+  connection.query(sql, (err, rows) => {
     if (err) throw err;
-    console.table(res);
+    console.table(rows);
     promptUser();
   });
 };
 
 //view all departments
-const viewAllDepartments = () => {
+const getAllDepartments = async () => {
   console.log("Now viewing all departments");
-  const sql = `SELECT departments.id AS id, 
-              departments.name AS departments FROM departments`;
-  connection.promise().query(sql, (err, res) => {
-    if (err) throw err;
+  const department = await query("SELECT name, id FROM department");
+  return department.map(({ name, id }) => {
+    return {
+      name,
+      value: id,
+    };
+  });
+};
+
+const viewAllDepartments = () => {
+  query("SELECT * FROM department", (err, res) => {
+    if (err) {
+      console.log(err);
+    }
     console.table(res);
-    promptUser();
   });
 };
 
 //view all roles
 const viewAllRoles = () => {
   console.log("Now viewing all roles");
-  const sql = `SELECT role.id, role.title, 
+  const sql = `SELECT role.title, 
               department.name AS department
               FROM role
               INNER JOIN department ON role.department_id = department.id`;
-  connection.promise().query(sql, (err, res) => {
+  connection.query(sql, (err, res) => {
     if (err) throw err;
     console.table(res);
     promptUser();
@@ -132,16 +143,14 @@ const addDepartment = async () => {
   console.log("Now viewing all departments");
   const { department } = await inquirer.prompt([
     {
+      type: "input",
       message: "What is the name of the department that you would like to add?",
       name: "department",
     },
   ]);
-  const sql = "INSERT INTO department (name) VALUES (?)";
-  connection.query(sql, department, (err, res) => {
-    if (err) console.log(err);
-    console.log(res);
-    promptUser();
-  });
+  await query("INSERT INTO department (name) VALUES (?)", department);
+  // getAllDepartments();
+  viewAllDepartments();
 };
 
 //add employee
@@ -203,26 +212,19 @@ const addRole = async () => {
 //remove department
 
 //update employee
-const employeeChoices = async () => {
-  const manager = await query(
-    "SELECT first_name, last_name, id FROM employees"
-  );
-  return manager.map((manager) => {
-    return {
-      name: `${manager.first_name} ${manager.last_name}`,
-      value: manager.id,
-    };
-  });
-};
 
 const updateEmployee = async () => {
   console.log("Now updating employee");
   const { employeeId, empRole } = await inquirer.prompt([
     {
-      type: "list",
+      type: "input",
       message: "Which employee would you like to update?",
       name: "employeeId",
-      choices: await employeeChoices(),
+    },
+    {
+      type: "input",
+      message: "Which role would you like to update the employee to?",
+      name: "empRole",
     },
   ]);
   try {
