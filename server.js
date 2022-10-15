@@ -121,19 +121,31 @@ const viewAllRoles = () => {
 };
 
 //add department
-const addDepartment = async () => {
-  console.log("Now viewing all departments");
-  const { department } = await inquirer.prompt([
-    {
-      type: "input",
-      message: "What is the name of the department that you would like to add?",
-      name: "department",
-    },
-  ]);
-  await query("INSERT INTO department (name) VALUES (?)", department);
-  // getAllDepartments();
-  viewAllDepartments();
-};
+function addDepartment() {
+  inquirer
+    .prompt([
+      {
+        message: "What department would you like to add?",
+        type: "input",
+        name: "department",
+      },
+    ])
+    .then((response) => {
+      const newDepartment = [response.department];
+      db.query(
+        "INSERT INTO departments (department_name) VALUES (?)",
+        newDepartment,
+        (err, result) => {
+          if (err) {
+            throw err;
+            return;
+          }
+          console.log("New department has been added!");
+          return start();
+        }
+      );
+    });
+}
 
 //add employee
 const addEmployee = async () => {
