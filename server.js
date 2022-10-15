@@ -148,43 +148,51 @@ function addDepartment() {
 }
 
 //add employee
-const addEmployee = async () => {
-  console.log("Now adding an new employee");
-  const { firstName, lastName, empRole, empManager } = await inquirer.prompt([
-    {
-      message:
-        "What is the first name of the employee that you would like to add?",
-      name: "firstName",
-    },
-    {
-      message:
-        "What is the last name of the employee that you would like to add?",
-      name: "lastName",
-    },
-    {
-      message: "What is the role of the employee this employee?",
-      name: "empRole",
-    },
-    {
-      message: "Who is the manager that this employee is under?",
-      name: "empManager",
-    },
-  ]);
-  const sql =
-    "INSERT INTO employee (first_name, last_name, emp_role, emp_manager) VALUES (?)";
-  connection.query(
-    sql,
-    firstName,
-    lastName,
-    empRole,
-    empManager,
-    (err, res) => {
-      if (err) console.log(err);
-      console.log(res);
-      promptUser();
-    }
-  );
-};
+function addEmployee() {
+  inquirer
+    .prompt([
+      {
+        message: "Please enter the employee's ID number:",
+        type: "input",
+        name: "emp_id",
+      },
+      {
+        message: "What is the first name of the new employee",
+        type: "input",
+        name: "emp_firstName",
+      },
+      {
+        message: "What is the last name of the new employee",
+        type: "input",
+        name: "emp_lastName",
+      },
+      {
+        message: "What is the role of the new employee?",
+        type: "input",
+        name: "emp_role",
+      },
+    ])
+    .then((response) => {
+      const newEmployee = [
+        response.emp_id,
+        response.emp_firstName,
+        response.emp_lastName,
+        response.emp_role,
+      ];
+      db.query(
+        "INSERT INTO employee (id, first_name, last_name, role_id) VALUES (?,?,?,?)",
+        newEmployee,
+        (err, result) => {
+          if (err) {
+            throw err;
+            return;
+          }
+          console.log("New employee has been added!");
+          return start();
+        }
+      );
+    });
+}
 
 //add role
 const addRole = async () => {
