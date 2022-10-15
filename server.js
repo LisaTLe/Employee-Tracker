@@ -195,21 +195,41 @@ function addEmployee() {
 }
 
 //add role
-const addRole = async () => {
-  console.log("Now adding a new role");
-  const { role } = await inquirer.prompt([
-    {
-      message: "What is the role that you would like to add?",
-      name: "role",
-    },
-  ]);
-  const sql = "INSERT INTO role (name) VALUES (?)";
-  connection.query(sql, role, (err, res) => {
-    if (err) console.log(err);
-    console.log(res);
-    promptUser();
-  });
-};
+function addRole() {
+  inquirer
+    .prompt([
+      {
+        message: "What is the title of this role?",
+        type: "input",
+        name: "role_name",
+      },
+      {
+        message: "What is the salary of this role?",
+        type: "input",
+        name: "role_salary",
+      },
+      {
+        message: "What department does this role belong to?",
+        type: "input",
+        name: "role_dept",
+      },
+    ])
+    .then((response) => {
+      const newRole = [
+        response.role_name,
+        response.role_salary,
+        response.role_dept,
+      ];
+      db.query(
+        "INSERT INTO roles (title, salary, department) VALUES (?,?,?)",
+        newRole,
+        (err, result) => {
+          if (err) throw err;
+          return start();
+        }
+      );
+    });
+}
 
 //remove department
 
