@@ -216,29 +216,34 @@ function addRole() {
 
 //update employee
 
-const updateEmployee = async () => {
-  console.log("Now updating employee");
-  const { employeeId, empRole } = await inquirer.prompt([
-    {
-      type: "input",
-      message: "Which employee would you like to update?",
-      name: "employeeId",
-    },
-    {
-      type: "input",
-      message: "Which role would you like to update the employee to?",
-      name: "empRole",
-    },
-  ]);
-  try {
-    await query("UPDATE employees SET role_id = ? WHERE id = ?", [
-      empRole,
-      employeeId,
-    ]);
-  } catch (err) {
-    console.log(err);
-    promptUser();
-  }
-};
+// const updateEmployee = async () => {
+//   console.log("Now updating employee");
+//   const { employeeId, empRole } = await inquirer.prompt([
+//     {
+//       type: "input",
+//       message: "Which employee would you like to update?",
+//       name: "employeeId",
+//     },
+//     {
+//       type: "input",
+//       message: "Which role would you like to update the employee to?",
+//       name: "empRole",
+//     },
+//   ]);
+//   try {
+//     await query("UPDATE employees SET role_id = ? WHERE id = ?", [
+//       empRole,
+//       employeeId,
+//     ]);
+//   } catch (err) {
+//     console.log(err);
+//     promptUser();
+//   }
+// };
 
-promptUser();
+// promptUser();
+
+function finish() {
+  console.log("Back to main menu");
+  return start();
+};
