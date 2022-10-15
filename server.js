@@ -66,59 +66,40 @@ function start() {
 start();
 
 //view all employees
-const viewAllEmployees = () => {
-  console.log("Now viewing all employees");
-
-  const sql = `SELECT employee.id, 
-              employee.first_name, 
-              employee.last_name, 
-              role.title, 
-              department.name AS department, 
-              role.salary,
-              FROM employee, role, department 
-              WHERE department.id = role.department_id`;
-
-  connection.query(sql, (err, rows) => {
-    if (err) throw err;
-    console.table(rows);
-    promptUser();
+function viewAllEmployees() {
+  db.query("SELECT * FROM employee", (err, response) => {
+    if (err) {
+      throw err;
+      return;
+    }
+    console.log(response);
+    return start();
   });
-};
+}
 
 //view all departments
-const getAllDepartments = async () => {
-  console.log("Now viewing all departments");
-  const department = await query("SELECT name, id FROM department");
-  return department.map(({ name, id }) => {
-    return {
-      name,
-      value: id,
-    };
-  });
-};
-
-const viewAllDepartments = () => {
-  query("SELECT * FROM department", (err, res) => {
+function viewAllDepartments() {
+  db.query("SELECT * FROM departments", (err, response) => {
     if (err) {
-      console.log(err);
+      throw err;
+      return;
     }
-    console.table(res);
+    console.log(response);
+    return start();
   });
-};
+}
 
 //view all roles
-const viewAllRoles = () => {
-  console.log("Now viewing all roles");
-  const sql = `SELECT role.title, 
-              department.name AS department
-              FROM role
-              INNER JOIN department ON role.department_id = department.id`;
-  connection.query(sql, (err, res) => {
-    if (err) throw err;
-    console.table(res);
-    promptUser();
+function viewAllRoles() {
+  db.query("SELECT * FROM roles", (err, response) => {
+    if (err) {
+      throw err;
+      return;
+    }
+    console.log(response);
+    return start();
   });
-};
+}
 
 //add department
 function addDepartment() {
