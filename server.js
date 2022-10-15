@@ -2,14 +2,10 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const table = require("console.table");
-const { response } = require("express");
-// const { query } = require("express");
+
 require("dotenv").config();
 
-// const query = require("./config/connection");
-
 //connect db
-
 const db = mysql.createConnection(
   {
     host: "localhost",
@@ -64,42 +60,6 @@ function start() {
 }
 
 start();
-
-//view all employees
-function viewAllEmployees() {
-  db.query("SELECT * FROM employee", (err, response) => {
-    if (err) {
-      throw err;
-      return;
-    }
-    console.log(response);
-    return start();
-  });
-}
-
-//view all departments
-function viewAllDepartments() {
-  db.query("SELECT * FROM departments", (err, response) => {
-    if (err) {
-      throw err;
-      return;
-    }
-    console.log(response);
-    return start();
-  });
-}
-
-//view all roles
-function viewAllRoles() {
-  db.query("SELECT * FROM roles", (err, response) => {
-    if (err) {
-      throw err;
-      return;
-    }
-    console.log(response);
-    return start();
-  });
-}
 
 //add department
 function addDepartment() {
@@ -206,13 +166,52 @@ function addRole() {
         "INSERT INTO roles (title, salary, department) VALUES (?,?,?)",
         newRole,
         (err, result) => {
-          if (err) throw err;
+          if (err) {
+            throw err;
+            return;
+          }
+          console.log("Role has been added!");
           return start();
         }
       );
     });
 }
 
+//view all employees
+function viewAllEmployees() {
+  db.query("SELECT * FROM employee", (err, response) => {
+    if (err) {
+      throw err;
+      return;
+    }
+    console.table(response);
+    return start();
+  });
+}
+
+//view all departments
+function viewAllDepartments() {
+  db.query("SELECT * FROM departments", (err, response) => {
+    if (err) {
+      throw err;
+      return;
+    }
+    console.table(response);
+    return start();
+  });
+}
+
+//view all roles
+function viewAllRoles() {
+  db.query("SELECT * FROM roles", (err, response) => {
+    if (err) {
+      throw err;
+      return;
+    }
+    console.table(response);
+    return start();
+  });
+}
 //remove department
 
 //update employee
