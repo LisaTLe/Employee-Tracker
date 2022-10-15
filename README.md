@@ -20,7 +20,7 @@ User will be able to start application on a cammand line that will accept input.
 
 ## Demo
 
-![Demo Video Link](https://drive.google.com/file/d/1Mb9Xdqlur5bn4jciQ9UfljbmYdqHLxqS/view)
+[Demo Video Link](https://drive.google.com/file/d/1Mb9Xdqlur5bn4jciQ9UfljbmYdqHLxqS/view)
 
 ![Demo Gif](./assets/demo.gif)
 
