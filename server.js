@@ -190,8 +190,9 @@ function addRole() {
         name: "role_salary",
       },
       {
-        message: "What department does this role belong to?",
-        type: "input",
+        message:
+          "What department does this role belong to? (1-Sales, 2- Engineer, 3-legal, 4-finance)",
+        choices: ["1", "2", "3", "4"],
         name: "role_dept",
       },
     ])
@@ -246,4 +247,4 @@ function addRole() {
 function finish() {
   console.log("Back to main menu");
   return start();
-};
+}
