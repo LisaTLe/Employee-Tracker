@@ -1,20 +1,24 @@
-const connection = require("./config/connection");
+// const connection = require("./config/connection");
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
-const cTable = require("console.table");
-const { query } = require("express");
+const table = require("console.table");
+const { response } = require("express");
+// const { query } = require("express");
+require("dotenv").config();
 
 // const query = require("./config/connection");
 
 //connect db
 
-// const connection = mysql.createConnection({
-//   host: "localhost",
-//   port: 3306,
-//   user: "root",
-//   password: "process.env.DB_PASSWORD",
-//   database: "employee_db",
-// });
+const db = mysql.createConnection(
+  {
+    host: "localhost",
+    user: "root",
+    password: "process.env.DB_PASSWORD",
+    database: "employee_db",
+  },
+  console.log("connected to database")
+);
 
 // connection.connect((err) => {
 //   if (err) throw err;
@@ -22,66 +26,44 @@ const { query } = require("express");
 // });
 
 //prompt choices for user
-const promptUser = () => {
+function start() {
   inquirer
     .prompt([
       {
-        name: "choices",
+        message: " What would you like to do?",
         type: "list",
-        message: "Please choose a option to continue:",
         choices: [
-          "View All Employees",
-          "View All Departments",
-          "View All Roles",
           "Add Department",
           "Add Role",
           "Add Employee",
-          "Remove Employee",
-          "Remove Role",
-          "Remove Department",
-          "Update Employee",
+          "View Departments",
+          "View Roles",
+          "View Employees",
           "Finish",
         ],
+        name: "start",
       },
     ])
-    .then(function (answers) {
-      const { choices } = answers;
-      if (choices === "View All Employees") {
-        viewAllEmployees();
-      }
-      if (choices === "View All Departments") {
-        getAllDepartments();
-        viewAllDepartments();
-      }
-      if (choices === "View All Roles") {
-        viewAllRoles();
-      }
-      if (choices === "Add Department") {
-        addDepartment();
-      }
-      if (choices === "Add Role") {
-        addRole();
-      }
-      if (choices === "Add Employee") {
-        addEmployee();
-      }
-      if (choices === "Remove Employee") {
-        removeEmployee();
-      }
-      if (choices === "Remove Role") {
-        removeRole();
-      }
-      if (choices === "Remove Department") {
-        removeDepartment();
-      }
-      if (choices === "Update Employee") {
-        updateEmployee();
-      }
-      if (choices === "Finish") {
-        connection.end();
+    .then((response) => {
+      if (response.start === "Add Department") {
+        return addDepartment();
+      } else if (response.start === "Add Role") {
+        return addRole();
+      } else if (response.start === "Add Employee") {
+        return addEmployee();
+      } else if (response.start === "View Departments") {
+        return viewAllDepartments();
+      } else if (response.start === "View Roles") {
+        return viewAllRoles();
+      } else if (response.start === "View Employees") {
+        return viewAllEmployees();
+      } else {
+        return finish();
       }
     });
-};
+}
+
+start();
 
 //view all employees
 const viewAllEmployees = () => {
